@@ -1,0 +1,80 @@
+====================================Most Reserved Trains=================================
+
+SELECT ti.train_id, tr.type, COUNT(ti.train_id) AS max_reserved_counts FROM ticket ti
+INNER JOIN train tr ON (ti.train_id = tr.train_id)
+GROUP BY ti.train_id, tr.type
+ORDER BY COUNT(ti.train_id) DESC
+LIMIT 3;
+
+====================================Least Reserved Trains=================================
+
+SELECT ti.train_id, tr.type, COUNT(ti.train_id) AS min_reserved_counts FROM ticket ti
+INNER JOIN train tr ON (ti.train_id = tr.train_id)
+GROUP BY ti.train_id, tr.type
+ORDER BY COUNT(ti.train_id) ASC
+LIMIT 3;
+
+=============================Routes of Trains Out Of Service==============================
+
+SELECT tm.train_id, tr.route_id, r.source_station, r.destination_station FROM trains_maintainance tm
+INNER JOIN trains_routes tr ON (tm.train_id = tr.train_id)
+INNER JOIN route r ON (r.route_id = tr.route_id)
+INNER JOIN maintainance mm ON (mm.maint_id = tm.maint_id)
+WHERE mm.exit_date is null;
+
+==================================The Most Late Trains=====================================
+
+SELECT t.train_id, sc.planned_arrival, sc.arrival_time, sc.calendar FROM train t
+INNER JOIN schedule sc ON (sc.schedule_id = t.schedule_id)
+GROUP BY t.train_id, sc.planned_arrival, sc.arrival_time, sc.calendar 
+ORDER BY MAX(arrival_time - planned_arrival) DESC;
+
+==================================Ticket Details of every passenger========================================
+
+SELECT t.ticket_id , t.train_id , r.source_station ,r.destination_station
+, p.first_name ||' '|| p.last_name AS passenger_name , t.seat_id , c.class , c.cost , sc.planned_arrival,
+sc.planned_departure , sc.calendar
+FROM ticket t , route r , trains_routes e , passengers p , seat s , classes c  , train f , schedule sc
+WHERE t.train_id = e.train_id
+AND e.route_id = r.route_id
+AND t.passenger_id = p.passenger_id
+AND s.seat_id = t.seat_id
+AND s.train_id = t.train_id
+AND c.class_id = s.class_id
+AND f.train_id = t.train_id
+AND sc.schedule_id = f.schedule_id
+AND t.ticket_id = 400
+
+==================================Ticket Details with conditions========================================
+
+SELECT t.ticket_id , t.train_id , r.source_station ,r.destination_station
+, p.first_name ||' '|| p.last_name AS passenger_name , t.seat_id , c.class , c.cost , sc.planned_departure , sc.planned_arrival,
+ sc.calendar
+FROM ticket t , route r , trains_routes e , passengers p , seat s , classes c  , train f , schedule sc
+WHERE t.train_id = e.train_id
+AND e.route_id = r.route_id
+AND t.passenger_id = p.passenger_id
+AND s.seat_id = t.seat_id
+AND s.train_id = t.train_id
+AND c.class_id = s.class_id
+AND f.train_id = t.train_id
+AND sc.schedule_id = f.schedule_id
+AND sc.calendar BETWEEN '2021-01-01' AND '2021-06-01'
+ORDER BY sc.calendar;
+
+==================================Most Reserved Classes========================================
+
+SELECT count(s.class_id) , c.class , c.cost
+FROM seat s , ticket t , classes c
+WHERE s.seat_id = t.seat_id
+AND s.train_id = t.train_id
+AND c.class_id = s.class_id
+GROUP BY (c.class , c.cost)
+ORDER BY count(s.class_id) DESC;
+
+==================================Most Maintaned Trains========================================
+
+SELECT COUNT(maint_id) , train_id
+FROM trains_maintainance
+GROUP BY train_id 
+ORDER COUNT(maint_id) DESC

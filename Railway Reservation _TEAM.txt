@@ -1,0 +1,21 @@
+		Ziad Mohamed Sayed              sec.3
+
+(requirments, ERD, relational model , normalization  , schema , DDL , DML , Quries)
+
+		Mohamed Samy Mohamed            sec.1
+
+(ERD , relational model , normalization  , schema , DDL , DML, Quries)
+
+		Yousef karam Saied              sec.3
+
+(ERD , relational model , normalization , schema , DDL , DML, Quries)
+
+
+		Ahmed Saleh Abdo                sec.3
+
+(requirments, ERD , relational model, normalization )
+
+
+		Omar Ismaiel AbdElaziz          sec.3
+
+(requirments, ERD)
