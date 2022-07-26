@@ -1,0 +1,131 @@
+CREATE TABLE Passengers
+(
+  passenger_id INT NOT NULL,
+  first_name VARCHAR(20) NOT NULL,
+  last_name VARCHAR(20) NOT NULL,
+  gender VARCHAR(6) NOT NULL,
+  ssn VARCHAR(14) NOT NULL,
+  mobile VARCHAR(11) NOT NULL,
+  birth_date DATE NOT NULL,
+  PRIMARY KEY (passenger_id),
+  UNIQUE (ssn)
+);
+
+CREATE TABLE Schedule
+(
+  schedule_id INT NOT NULL,
+  planned_departure TIME NOT NULL,
+  planned_arrival TIME NOT NULL,
+  departure_time TIME NOT NULL,
+  arrival_time TIME NOT NULL,
+  calendar DATE NOT NULL,
+  PRIMARY KEY (schedule_id)
+);
+
+CREATE TABLE Route
+(
+  route_id INT NOT NULL,
+  source_station VARCHAR(30) NOT NULL,
+  destination_station VARCHAR(30) NOT NULL,
+  PRIMARY KEY (route_id)
+);
+
+CREATE TABLE Classes
+(
+  class_id INT NOT NULL,
+  class VARCHAR(15) NOT NULL,
+  cost INT NOT NULL,
+  PRIMARY KEY (class_id)
+);
+
+CREATE TABLE Maintainance
+(
+  maint_id INT NOT NULL,
+  cost INT NOT NULL,
+  company VARCHAR(30) NOT NULL,
+  entrance_date DATE NOT NULL,
+  exit_date DATE,
+  PRIMARY KEY (maint_id)
+);
+
+CREATE TABLE Employees_Titles
+(
+  job_id INT NOT NULL,
+  job_title VARCHAR(30) NOT NULL,
+  salary INT NOT NULL,
+  shift_duration INT NOT NULL,
+  PRIMARY KEY (job_id)
+);
+
+CREATE TABLE Employee
+(
+  emp_id INT NOT NULL,
+  job_id INT NOT NULL,
+  ssn VARCHAR(14) NOT NULL,
+  first_name VARCHAR(20) NOT NULL,
+  last_name VARCHAR(20) NOT NULL,
+  gender VARCHAR(6) NOT NULL,
+  birth_date DATE NOT NULL,
+  PRIMARY KEY (emp_id),
+  FOREIGN KEY (job_id) REFERENCES Employees_Titles(job_id),
+  UNIQUE (ssn)
+);
+
+CREATE TABLE Train
+(
+  train_id INT NOT NULL,
+  schedule_id INT NOT NULL,
+  type VARCHAR(30) NOT NULL,
+  manufactuer VARCHAR(30) NOT NULL,
+  Seats_count INT NOT NULL,
+  PRIMARY KEY (train_id),
+  FOREIGN KEY (schedule_id) REFERENCES Schedule(schedule_id)
+);
+
+CREATE TABLE Seat
+(
+  Seat_id INT NOT NULL,
+  train_id INT NOT NULL,
+  class_id INT NOT NULL,
+  PRIMARY KEY (Seat_id, train_id),
+  FOREIGN KEY (train_id) REFERENCES Train(train_id),
+  FOREIGN KEY (class_id) REFERENCES Classes(class_id)
+);
+
+CREATE TABLE Trains_Routes
+(
+  train_id INT NOT NULL,
+  route_id INT NOT NULL,
+  PRIMARY KEY (train_id, route_id),
+  FOREIGN KEY (train_id) REFERENCES Train(train_id),
+  FOREIGN KEY (route_id) REFERENCES Route(route_id)
+);
+
+CREATE TABLE Trains_Maintainance
+(
+  train_id INT NOT NULL,
+  maint_id INT NOT NULL,
+  PRIMARY KEY (train_id, maint_id),
+  FOREIGN KEY (train_id) REFERENCES Train(train_id),
+  FOREIGN KEY (maint_id) REFERENCES Maintainance(maint_id)
+);
+
+CREATE TABLE Emp_Trains
+(
+  emp_id INT NOT NULL,
+  train_id INT NOT NULL,
+  PRIMARY KEY (emp_id, train_id),
+  FOREIGN KEY (emp_id) REFERENCES Employee(emp_id),
+  FOREIGN KEY (train_id) REFERENCES Train(train_id)
+);
+
+CREATE TABLE Ticket
+(
+  ticket_id INT NOT NULL,
+  passenger_id INT NOT NULL,
+  train_id INT NOT NULL,
+  Seat_id INT NOT NULL,
+  PRIMARY KEY (ticket_id),
+  FOREIGN KEY (passenger_id) REFERENCES Passengers(passenger_id),
+  FOREIGN KEY (train_id, Seat_id) REFERENCES Seat(train_id, Seat_id)
+);
